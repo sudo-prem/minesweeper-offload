@@ -253,9 +253,9 @@ while True:
 
         # If Inference button clicked, toggle showInference
         elif safesMinesButton.collidepoint(mouse):
-            # showInference = not showInference
-            showInference = True
-            # time.sleep(0.2)
+            showInference = not showInference
+            # showInference = True
+            time.sleep(0.2)
 
         # User-made move
         elif not lost:
