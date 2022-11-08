@@ -14,7 +14,11 @@ local_CPI = DeviceProfiler().get_local_CPI
 
 
 def safe_move_remote(code_sync):
-    code_sync_remote = loads(code_sync, object_hook=as_python_object)
+    try:
+        code_sync_remote = loads(code_sync, object_hook=as_python_object)
+    except:
+        print("Error while decoding the object obtained from the UE")
+        exit()
 
     print("*** Executed Remotely ***")
     msAI = MinesweeperAI()
@@ -26,12 +30,20 @@ def safe_move_remote(code_sync):
 
     code_sync_Return = CodeSync(msAI.sentenceList, msAI.knowledge,
                                 msAI.mines, msAI.safes)
-    res = dumps(code_sync_Return, cls=ObjectEncoder)
-    return res
+    try:
+        res = dumps(code_sync_Return, cls=ObjectEncoder)
+        return res
+    except:
+        print("Error while encoding the object in the server")
+        exit()
 
 
 if __name__ == '__main__':
-    server = SimpleXMLRPCServer(("", 8000))
+    try:
+        server = SimpleXMLRPCServer(("", 8000))
+    except:
+        print("Error in starting remote server!")
+        exit()
     print("Listening on port 8000...")
     server.register_function(local_frequency, "local_frequency")
     server.register_function(local_CPI, "local_CPI")

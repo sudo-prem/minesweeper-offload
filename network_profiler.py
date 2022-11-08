@@ -18,8 +18,12 @@ class NetworkProfiler:
         url = constants.SERVER_URL
         # url = "https://google.com/"
         start_time = time.time()
-        response = requests.get(url)
-
+        try:
+            response = requests.get(url)
+        except:
+            print("Network Error! GET request not successful")
+            sys.exit()
+        
         res_size = sys.getsizeof(response)
         end_time = time.time()
         rtt = (((end_time - start_time) * 1000)) / res_size

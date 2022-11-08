@@ -1,9 +1,7 @@
 import psutil
-import time
 from object_encoder import *
 import time
 from xmlrpc.client import ServerProxy
-import cpuinfo
 import constants
 
 
@@ -18,7 +16,11 @@ class DeviceProfiler:
         if self.server != None:
             return
         url = constants.SERVER_URL
-        self.server = ServerProxy(url)
+        try:
+            self.server = ServerProxy(url)
+        except:
+            print("Error connecting to the remote server!")
+            exit()
 
     def get_remote_cpu_frequency(self):
         self.connect_to_server()
