@@ -4,6 +4,7 @@ from object_encoder import *
 import time
 from xmlrpc.client import ServerProxy
 import cpuinfo
+import constants
 
 
 class DeviceProfiler:
@@ -16,7 +17,7 @@ class DeviceProfiler:
     def connect_to_server(self):
         if self.server != None:
             return
-        url = "http://localhost:8000/"
+        url = constants.SERVER_URL
         self.server = ServerProxy(url)
 
     def get_remote_cpu_frequency(self):
@@ -31,6 +32,7 @@ class DeviceProfiler:
 
     # Returns in hertz
     def get_local_cpu_frequency(self):
+        # cpu_info = cpuinfo.get_cpu_info()
         self.frequency = psutil.cpu_freq().current
         return self.frequency
 
@@ -42,16 +44,17 @@ class DeviceProfiler:
         y = x ^ y
         x = x ^ y
 
+
     def get_local_CPI(self):
         if self.CPI != None:
             return self.CPI
 
         IC = 3
         total_CPI = 0
-
+        
         for i in range(7):
             task = self.swap
-
+            
             time_taken = get_estimated_time(task)
             freq = self.get_local_cpu_frequency()
 

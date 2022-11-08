@@ -8,7 +8,7 @@ from object_encoder import ObjectEncoder, as_python_object
 from code_sync import CodeSync
 from profiler import *
 import sys
-
+import constants
 
 class Minesweeper():
     """
@@ -159,6 +159,8 @@ class MinesweeperAI():
 
         # Set initial height and width
         self.height = height
+        self.remote_count = 0
+        self.local_count = 0
         self.width = width
 
         # Keep track of which cells have been clicked on
@@ -292,12 +294,17 @@ class MinesweeperAI():
         print("Local Execution Cost : ", local_exec_cost, "ms")
         print("Remote Execution Cost: ", remote_exec_cost, "ms")
 
+        print("Local Count: ", self.local_count)
+        print("Remote Count: ", self.remote_count)
         if local_exec_cost < remote_exec_cost:
+            self.local_count += 1
             print("Local Execution")
             self.conclusion()
         else:
+            self.remote_count += 1
             print("Remote Execution")
-            server = xmlrpc.client.ServerProxy('http://localhost:8000')
+
+            server = xmlrpc.client.ServerProxy(constants.SERVER_URL)
 
             csRemote = server.safe_move_remote(obj)
             csResult = loads(csRemote, object_hook=as_python_object)
