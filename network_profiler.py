@@ -3,7 +3,7 @@ import os
 import time
 import sys
 import requests
-import constants
+from constants import *
 
 class NetworkProfiler:
 
@@ -15,7 +15,7 @@ class NetworkProfiler:
 
     # Network cost for 1 byte
     def get_rtt(self):
-        url = constants.SERVER_URL
+        url = Constants.getInstance().SERVER_URL
         # url = "https://google.com/"
         start_time = time.time()
         try:

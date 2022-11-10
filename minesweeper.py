@@ -8,7 +8,7 @@ from object_encoder import ObjectEncoder, as_python_object
 from code_sync import CodeSync
 from profiler import *
 import sys
-import constants
+from constants import *
 
 class Minesweeper():
 
@@ -236,7 +236,8 @@ class MinesweeperAI():
         else:
             print("Remote Execution")
             try:
-                server = xmlrpc.client.ServerProxy(constants.SERVER_URL)
+                server = xmlrpc.client.ServerProxy(
+                    Constants.getInstance().SERVER_URL)
             except:
                 print("Error in connecting to the remote server!")
                 self.local_count += 1

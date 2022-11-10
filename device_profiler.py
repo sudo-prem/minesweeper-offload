@@ -2,7 +2,7 @@ import psutil
 from object_encoder import *
 import time
 from xmlrpc.client import ServerProxy
-import constants
+from constants import *
 
 
 class DeviceProfiler:
@@ -15,7 +15,7 @@ class DeviceProfiler:
     def connect_to_server(self):
         if self.server != None:
             return
-        url = constants.SERVER_URL
+        url = Constants.getInstance().SERVER_URL
         try:
             self.server = ServerProxy(url)
         except:
