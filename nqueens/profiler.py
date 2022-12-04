@@ -46,8 +46,9 @@ class Profiler:
         # Execution Cost = Data Transportation Cost + Execution Cost in Master Node
         instruction_count = self.task_profiler.get_instruction_count()
         # CPU frequency and Cycles per Instruction (CPI) in Master Node
-        cpu_frequency = self.device_profiler.get_remote_cpu_frequency()
-        CPI = self.device_profiler.get_remote_CPI()
+        # cpu_frequency = self.device_profiler.get_remote_cpu_frequency()
+        # CPI = self.device_profiler.get_remote_CPI()
+        cpu_frequency, CPI = self.device_profiler.get_remote_metrics()
 
         data_transporation_cost = self.get_data_transporation_cost()
         remote_execution_cost = (instruction_count * CPI) / (cpu_frequency / 1000)

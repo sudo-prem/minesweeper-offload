@@ -29,6 +29,17 @@ def as_python_object(dct):
     return dct
 
 
+
+
+
+
+
+
+
+
+
+
+
 def get_estimated_time(task):
     start_time = time.time()
     time.sleep(0.0001)
@@ -36,3 +47,6 @@ def get_estimated_time(task):
     end_time = time.time()
     time_taken = (end_time - start_time) - 0.0001
     return time_taken
+
+def get_instruction_count(task):
+    pass

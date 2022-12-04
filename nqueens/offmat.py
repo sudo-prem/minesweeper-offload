@@ -10,11 +10,14 @@ from constants import *
 
 local_count=0
 remote_count=0
-def offmat(task, code_sync_obj):
-    global local_count
-    global remote_count
+
+def print_counts():
+    global local_count, remote_count
     print("Local Count: ", local_count)
     print("Remote Count: ", remote_count)
+
+def offmat(task, code_sync_obj):
+    global local_count, remote_count
 
     obj = dumps(code_sync_obj, cls=ObjectEncoder)
     # TODO: check units
@@ -41,6 +44,7 @@ def offmat(task, code_sync_obj):
     if local_exec_cost < remote_exec_cost:
         local_count += 1
         print("Local Execution")
+        print_counts()
         return False
     else:
         print("Remote Execution")
@@ -51,6 +55,7 @@ def offmat(task, code_sync_obj):
             print("Error in connecting to the remote server!")
             local_count += 1
             print("Local Execution")
+            print_counts()
             # self.conclusion()
             flag = 1
             return False
@@ -63,6 +68,6 @@ def offmat(task, code_sync_obj):
                 print("Error in loading the object from the server!")
                 exit()
                 
-            # print(csResult.mines, csResult.safes, csResult.knowledge, csResult.sentenceList)
+            print_counts()
             return csResult
 

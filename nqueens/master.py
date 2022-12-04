@@ -12,7 +12,8 @@ from object_encoder import ObjectEncoder, as_python_object
 local_frequency = DeviceProfiler().get_local_cpu_frequency
 local_CPI = DeviceProfiler().get_local_CPI
 
-
+def server_metrics():
+    return local_frequency(), local_CPI()
 def NQueens_Remote(code_sync):
     try:
         code_sync_remote = loads(code_sync, object_hook=as_python_object)
@@ -47,4 +48,5 @@ if __name__ == '__main__':
     server.register_function(local_frequency, "local_frequency")
     server.register_function(local_CPI, "local_CPI")
     server.register_function(NQueens_Remote, "NQueens_Remote")
+    server.register_function(server_metrics, "server_metrics")
     server.serve_forever()
