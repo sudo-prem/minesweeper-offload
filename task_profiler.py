@@ -26,8 +26,11 @@ class TaskProfiler:
 
         # Estimated time for task execution
         time = get_estimated_time(self.task)
-        self.instruction_count = (time * self.cpu_frequency + 1) // self.CPI
-
+        try:
+            self.instruction_count = (time * self.cpu_frequency + 1) // self.CPI
+        except ZeroDivisionError:
+            print("CPI has not been set properly!")
+            exit()
         return self.instruction_count
 
 

@@ -3,7 +3,7 @@ import os
 import time
 import sys
 import requests
-
+from constants import *
 
 class NetworkProfiler:
 
@@ -15,11 +15,15 @@ class NetworkProfiler:
 
     # Network cost for 1 byte
     def get_rtt(self):
-        url = "http://localhost:8000/"
+        url = Constants.getInstance().SERVER_URL
         # url = "https://google.com/"
         start_time = time.time()
-        response = requests.get(url)
-
+        try:
+            response = requests.get(url)
+        except:
+            print("Network Error! GET request not successful")
+            sys.exit()
+        
         res_size = sys.getsizeof(response)
         end_time = time.time()
         rtt = (((end_time - start_time) * 1000)) / res_size

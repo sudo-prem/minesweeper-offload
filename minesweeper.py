@@ -8,12 +8,9 @@ from object_encoder import ObjectEncoder, as_python_object
 from code_sync import CodeSync
 from profiler import *
 import sys
-
+from constants import *
 
 class Minesweeper():
-    """
-    Minesweeper game representation
-    """
 
     def __init__(self, height=8, width=8, mines=8):
 
@@ -42,10 +39,6 @@ class Minesweeper():
         self.mines_found = set()
 
     def print(self):
-        """
-        Prints a text-based representation
-        of where mines are located.
-        """
         for i in range(self.height):
             print("--" * self.width + "-")
             for j in range(self.width):
@@ -61,11 +54,6 @@ class Minesweeper():
         return self.board[i][j]
 
     def nearby_mines(self, cell):
-        """
-        Returns the number of mines that are
-        within one row and column of a given cell,
-        not including the cell itself.
-        """
 
         # Keep count of nearby mines
         count = 0
@@ -86,18 +74,10 @@ class Minesweeper():
         return count
 
     def won(self):
-        """
-        Checks if all mines have been flagged.
-        """
         return self.mines_found == self.mines
 
 
 class Sentence():
-    """
-    Logical statement about a Minesweeper game
-    A sentence consists of a set of board cells,
-    and a count of the number of those cells which are mines.
-    """
 
     def __init__(self, cells, count):
         self.cells = set(cells)
@@ -110,26 +90,16 @@ class Sentence():
         return f"{self.cells} = {self.count}"
 
     def known_mines(self):
-        """
-        Returns the set of all cells in self.cells known to be mines.
-        """
         if len(self.cells) == self.count:
             return self.cells
         return None
 
     def known_safes(self):
-        """
-        Returns the set of all cells in self.cells known to be safe.
-        """
         if self.count == 0:
             return self.cells
         return None
 
     def mark_mine(self, cell):
-        """
-        Updates internal knowledge representation given the fact that
-        a cell is known to be a mine.
-        """
         newCells = set()
         for item in self.cells:
             if item != cell:
@@ -139,10 +109,6 @@ class Sentence():
         self.cells = newCells
 
     def mark_safe(self, cell):
-        """
-        Updates internal knowledge representation given the fact that
-        a cell is known to be safe.
-        """
         newCells = set()
         for item in self.cells:
             if item != cell:
@@ -151,14 +117,13 @@ class Sentence():
 
 
 class MinesweeperAI():
-    """
-    Minesweeper game player
-    """
 
     def __init__(self, height=8, width=8):
 
         # Set initial height and width
         self.height = height
+        self.remote_count = 0
+        self.local_count = 0
         self.width = width
 
         # Keep track of which cells have been clicked on
@@ -173,38 +138,16 @@ class MinesweeperAI():
         self.sentenceList = []
 
     def mark_mine(self, cell):
-        """
-        Marks a cell as a mine, and updates all knowledge
-        to mark that cell as a mine as well.
-        """
         self.mines.add(cell)
         for sentence in self.knowledge:
             sentence.mark_mine(cell)
 
     def mark_safe(self, cell):
-        """
-        Marks a cell as safe, and updates all knowledge
-        to mark that cell as safe as well.
-        """
         self.safes.add(cell)
         for sentence in self.knowledge:
             sentence.mark_safe(cell)
 
     def add_knowledge(self, cell, count):
-        """
-        Called when the Minesweeper board tells us, for a given
-        safe cell, how many neighboring cells have mines in them.
-
-        This function should:
-            1) mark the cell as a move that has been made
-            2) mark the cell as safe
-            3) add a new sentence to the AI's knowledge base
-               based on the value of `cell` and `count`
-            4) mark any additional cells as safe or as mines
-               if it can be concluded based on the AI's knowledge base
-            5) add any new sentences to the AI's knowledge base
-               if they can be inferred from existing knowledge
-        """
         # Mark cell as safe and add to moves_made
         self.mark_safe(cell)
         self.moves_made.add(cell)
@@ -212,7 +155,7 @@ class MinesweeperAI():
         # Create and Add sentence to knowledge
         neighbors, count = self.get_cell_neighbors(cell, count)
 
-        # Ex:{A,B,C} = 2
+        # Ex:{A,B,C} = 2 where A,B,C is each a tuple of (i, j) coordinates and 2 is the number of mines
         sentence = Sentence(neighbors, count)
         self.knowledge.append(sentence)
 
@@ -265,14 +208,6 @@ class MinesweeperAI():
         self.sentenceList.clear()
 
     def make_safe_move(self):
-        """
-        Returns a safe cell to choose on the Minesweeper board.
-        The move must be known to be safe, and not already a move
-        that has been made.
-
-        This function may use the knowledge in self.mines, self.safes
-        and self.moves_made, but should not modify any of those values.
-        """
 
         code_sync_obj = CodeSync(self.sentenceList, self.knowledge,
                                  self.mines, self.safes)
@@ -292,20 +227,40 @@ class MinesweeperAI():
         print("Local Execution Cost : ", local_exec_cost, "ms")
         print("Remote Execution Cost: ", remote_exec_cost, "ms")
 
+        flag = 0
+
         if local_exec_cost < remote_exec_cost:
+            self.local_count += 1
             print("Local Execution")
             self.conclusion()
         else:
             print("Remote Execution")
-            server = xmlrpc.client.ServerProxy('http://localhost:8000')
+            try:
+                server = xmlrpc.client.ServerProxy(
+                    Constants.getInstance().SERVER_URL)
+            except:
+                print("Error in connecting to the remote server!")
+                self.local_count += 1
+                print("Local Execution")
+                self.conclusion()
+                flag = 1
+            if(flag == 0):
+                self.remote_count += 1
+                csRemote = server.safe_move_remote(obj)
+                try:
+                    csResult = loads(csRemote, object_hook=as_python_object)
+                except:
+                    print("Error in loading the object from the server!")
+                    exit()
+                    
+                # print(csResult.mines, csResult.safes, csResult.knowledge, csResult.sentenceList)
+                self.sentenceList = csResult.sentenceList
+                self.knowledge = csResult.knowledge
+                self.mines = csResult.mines
+                self.safes = csResult.safes
 
-            csRemote = server.safe_move_remote(obj)
-            csResult = loads(csRemote, object_hook=as_python_object)
-            # print(csResult.mines, csResult.safes, csResult.knowledge, csResult.sentenceList)
-            self.sentenceList = csResult.sentenceList
-            self.knowledge = csResult.knowledge
-            self.mines = csResult.mines
-            self.safes = csResult.safes
+        print("Local Count: ", self.local_count)
+        print("Remote Count: ", self.remote_count)
 
         safeCells = self.safes - self.moves_made
         if not safeCells:
@@ -317,12 +272,6 @@ class MinesweeperAI():
 
     def make_random_move(self):
         # self.conclusion()
-        """
-        Returns a move to make on the Minesweeper board.
-        Should choose randomly among cells that:
-            1) have not already been chosen, and
-            2) are not known to be mines
-        """
         all_moves = set()
         for i in range(self.height):
             for j in range(self.width):
