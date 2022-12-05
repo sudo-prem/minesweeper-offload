@@ -1,10 +1,10 @@
 from base64 import b64encode, b64decode
 from json import dumps, loads, JSONEncoder, JSONDecoder
-from offload.device_profiler import DeviceProfiler
+from device_profiler import DeviceProfiler
 import xmlrpc.client
-from offload.object_encoder import ObjectEncoder, as_python_object
+from object_encoder import ObjectEncoder, as_python_object
 
-from offload.profiler import *
+from profiler import *
 import sys
 from constants import *
 

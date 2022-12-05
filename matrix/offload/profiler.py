@@ -3,9 +3,9 @@ import os
 import time
 import requests
 import pstats
-from offload.device_profiler import DeviceProfiler
-from offload.network_profiler import NetworkProfiler
-from offload.task_profiler import TaskProfiler
+from device_profiler import DeviceProfiler
+from network_profiler import NetworkProfiler
+from task_profiler import TaskProfiler
 
 
 

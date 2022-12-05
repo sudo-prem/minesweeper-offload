@@ -4,9 +4,9 @@ import psutil
 import os
 import time
 import requests
-from offload.device_profiler import DeviceProfiler
+from device_profiler import DeviceProfiler
 import pstats
-from offload.object_encoder import *
+from object_encoder import *
 import dis
 
 class TaskProfiler:

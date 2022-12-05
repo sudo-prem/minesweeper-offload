@@ -1,5 +1,5 @@
 import psutil
-from offload.object_encoder import *
+from object_encoder import *
 import time
 from xmlrpc.client import ServerProxy
 from constants import *
@@ -31,12 +31,14 @@ class DeviceProfiler:
     #     self.connect_to_server()
     #     CPI = self.server.local_CPI()
     #     return CPI
+
     def get_remote_metrics(self):
         self.connect_to_server()
         server_metrics = self.server.server_metrics()
         self.cpu_frequency = server_metrics[0]
         self.CPI = server_metrics[1]
         return self.cpu_frequency, self.CPI
+
     # Returns in hertz
     def get_local_cpu_frequency(self):
         # cpu_info = cpuinfo.get_cpu_info()
@@ -51,17 +53,16 @@ class DeviceProfiler:
         y = x ^ y
         x = x ^ y
 
-
     def get_local_CPI(self):
         if self.CPI != None:
             return self.CPI
 
         IC = 3
         total_CPI = 0
-        
+
         for i in range(7):
             task = self.swap
-            
+
             time_taken = get_estimated_time(task)
             freq = self.get_local_cpu_frequency()
 
