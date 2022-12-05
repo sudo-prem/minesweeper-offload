@@ -3,19 +3,20 @@ import os
 import time
 import requests
 import pstats
-from device_profiler import DeviceProfiler
-from network_profiler import NetworkProfiler
-from task_profiler import TaskProfiler
+from offload.device_profiler import DeviceProfiler
+from offload.network_profiler import NetworkProfiler
+from offload.task_profiler import TaskProfiler
 
 
 
 class Profiler:
 
-    def __init__(self, task, data_size):
+    def __init__(self, task, data_size, code_for_ic):
         self.task = task
         self.data_size = data_size
+        self.code_for_ic = code_for_ic
 
-        self.task_profiler = TaskProfiler(self.task)
+        self.task_profiler = TaskProfiler(self.task, self.code_for_ic)
         self.device_profiler = DeviceProfiler()
         self.network_profiler = NetworkProfiler()
 
@@ -46,9 +47,8 @@ class Profiler:
         # Execution Cost = Data Transportation Cost + Execution Cost in Master Node
         instruction_count = self.task_profiler.get_instruction_count()
         # CPU frequency and Cycles per Instruction (CPI) in Master Node
-        # cpu_frequency = self.device_profiler.get_remote_cpu_frequency()
-        # CPI = self.device_profiler.get_remote_CPI()
-        cpu_frequency, CPI = self.device_profiler.get_remote_metrics()
+        cpu_frequency = self.device_profiler.get_remote_cpu_frequency()
+        CPI = self.device_profiler.get_remote_CPI()
 
         data_transporation_cost = self.get_data_transporation_cost()
         remote_execution_cost = (instruction_count * CPI) / (cpu_frequency / 1000)
