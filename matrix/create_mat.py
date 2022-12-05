@@ -9,7 +9,7 @@ random.seed(1234)
 def create_mat(n):
     matrix_a = create_random_matrix(n)
     matrix_b = create_random_matrix(n)
-    save_matrix(matrix_a, matrix_b, "matrix.in")
+    save_matrix(matrix_a, matrix_b, "matrix.out")
 
 
 def create_random_matrix(n):

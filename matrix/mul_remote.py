@@ -1,12 +1,14 @@
 from create_mat import create_mat
 import time
+
 try:
     xrange
 except NameError:
     xrange = range
 
-class matrixMultiplication:
-    def __init__(self,ndim):
+
+class MatrixMultiplication:
+    def __init__(self, ndim):
         create_mat(ndim)
         self.ndim = ndim
         self.filename = "matrix.in"
@@ -19,13 +21,10 @@ class matrixMultiplication:
                 self.matrix.append([int(el) for el in line.split("\t")])
             else:
                 self.matrix = self.B
-        
 
-
-    def print_matrix(self,mat):
+    def print_matrix(self, mat):
         for line in mat:
             print("\t".join(map(str, line)))
-
 
     def standard_matrix_product(self):
         start = time.time()
@@ -41,11 +40,7 @@ class matrixMultiplication:
 
 if __name__ == "__main__":
     dim = int(input("Enter the dimension of the matrix: "))
-    mat = matrixMultiplication(dim)
-    
-    
+    mat = MatrixMultiplication(dim)
+
     C = mat.standard_matrix_product()
     mat.print_matrix(C)
-
-    
-

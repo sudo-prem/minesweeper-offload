@@ -1,17 +1,20 @@
 from create_mat import create_mat
 import time
+import sys
+sys.path.append('../offload')
+from offmat import offmat
 
-from offload.offmat import offmat
 try:
     xrange
 except NameError:
     xrange = range
 
-class matrixMultiplication:
-    def __init__(self,ndim):
+
+class MatrixMultiplication:
+    def __init__(self, ndim):
         create_mat(ndim)
         self.ndim = ndim
-        self.filename = "matrix.in"
+        self.filename = "matrix.out"
         lines = open(self.filename).read().splitlines()
         self.A = []
         self.B = []
@@ -21,13 +24,10 @@ class matrixMultiplication:
                 self.matrix.append([int(el) for el in line.split("\t")])
             else:
                 self.matrix = self.B
-        
 
-
-    def print_matrix(self,mat):
+    def print_matrix(self, mat):
         for line in mat:
             print("\t".join(map(str, line)))
-
 
     def standard_matrix_product(self):
         saved_args = locals()
@@ -42,7 +42,6 @@ class matrixMultiplication:
 
         task = self.standard_matrix_product
 
-        # offMatResult = offmat(task, code_sync_obj) 
         offMatResult = offmat(task, codeSyncDict)
         # offMatResult = False
         if offMatResult == False:
@@ -55,18 +54,26 @@ class matrixMultiplication:
                         C[i][j] += self.A[i][k] * self.B[k][j]
 
             print("Local Time: %f" % (time.time() - start))
+            print("**************************\n")
             return C
         else:
             return offMatResult['retVal']
 
 
 if __name__ == "__main__":
-    dim = int(input("Enter the dimension of the matrix: "))
-    mat = matrixMultiplication(dim)
-    
-    
-    C = mat.standard_matrix_product()
-    # mat.print_matrix(C)
+    inp = [line.strip() for line in open("matrix.in")]
+    s = inp[0].split(' ')
+    dimensions = []
 
-    
+    for c in s:
+        if c.isdigit():
+            dimensions.append(int(c))
+
+    for dim in dimensions:
+        matmul = MatrixMultiplication(int(dim))
+        res = matmul.standard_matrix_product()
+        
+        # for line in res:
+        #     print("\t".join(map(str, line)))
+        # print()
 

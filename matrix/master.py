@@ -3,17 +3,23 @@ from json import loads, JSONEncoder, dumps
 import random
 import pickle
 from base64 import b64decode, b64encode
-from offload.device_profiler import *
 
+import sys
+sys.path.append('../offload')
+
+from device_profiler import *
 from mul_remote import *
-from offload.object_encoder import ObjectEncoder, as_python_object
+from object_encoder import ObjectEncoder, as_python_object
 
 # Functions to register
 local_frequency = DeviceProfiler().get_local_cpu_frequency
 local_CPI = DeviceProfiler().get_local_CPI
 
+
 def server_metrics():
     return local_frequency(), local_CPI()
+
+
 def Matrix_Mul_Remote(code_sync):
 
     try:
@@ -23,7 +29,7 @@ def Matrix_Mul_Remote(code_sync):
         exit()
 
     print("*** Executed Remotely ***")
-    remoteClassVar = matrixMultiplication(2)
+    remoteClassVar = MatrixMultiplication(2)
     keys = locals()['code_sync_remote'].keys()
     values = locals()['code_sync_remote'].values()
     for key, val in zip(keys, values):
@@ -31,10 +37,8 @@ def Matrix_Mul_Remote(code_sync):
 
     result = remoteClassVar.standard_matrix_product()
 
-
     codeSyncDict = remoteClassVar.__dict__
 
-    
     codeSyncDict['retVal'] = result
     # print(codeSyncDict)
     try:
