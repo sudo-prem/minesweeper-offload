@@ -1,5 +1,3 @@
-from code_sync import CodeSync
-
 
 class NQueens:
     def __init__(self, N):

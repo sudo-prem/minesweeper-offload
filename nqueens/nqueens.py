@@ -1,4 +1,4 @@
-from code_sync import CodeSync
+
 import sys
 sys.path.append('../offload')
 from offmat import offmat

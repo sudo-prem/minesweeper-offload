@@ -3,7 +3,6 @@ from json import loads, JSONEncoder, dumps
 import random
 import pickle
 from base64 import b64decode, b64encode
-from code_sync import CodeSync
 from nqueens_remote import *
 
 import sys
