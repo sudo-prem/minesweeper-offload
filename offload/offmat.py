@@ -15,10 +15,40 @@ def print_counts():
     global local_count, remote_count
     print("Local Count: ", local_count)
     print("Remote Count: ", remote_count)
+    print()
 
 def offmat(task, code_sync_obj):
     global local_count, remote_count
 
+    # returns False as the Offloading decision to the caller
+    def execute_local():
+        global local_count
+        local_count+=1
+        print("***Local Execution***")
+        print_counts()
+        return False
+    
+    #Returns server response object in case of success, False otherwise
+    def execute_remote():
+        global remote_count
+        print("***Remote Execution***")
+        try:
+            server = xmlrpc.client.ServerProxy(
+                Constants.getInstance().SERVER_URL)
+                
+            csRemote = server.Matrix_Mul_Remote(obj)
+
+            try:
+                csResult = loads(csRemote, object_hook=as_python_object)
+                print_counts()
+                return csResult
+            except:
+                print("Error in loading the object from the server!")
+                return False
+        except:
+            print("Error in connecting to the remote server!")
+            return False
+        
     obj = dumps(code_sync_obj, cls=ObjectEncoder)
     # TODO: check units
     data_size = sys.getsizeof(obj) / 1024
@@ -32,36 +62,43 @@ def offmat(task, code_sync_obj):
 
     print("Local Execution Cost : ", local_exec_cost, "ms")
     print("Remote Execution Cost: ", remote_exec_cost, "ms")
+    print()
 
-    flag = 0
+    #Check if the battery is sufficient to execute the task locally
+    battery_status = profiler.batteryTracker.get_battery_status()
+    local_energy_cost = profiler.get_local_energy_consumption()
+    print("Local Energy Cost: ", local_energy_cost, "mwh")
+    print("Battery Level: ", battery_status['RemainingCapacity'], "mwh")
 
+
+    #Compare costs and execute locally or remotely
     if local_exec_cost < remote_exec_cost:
-        local_count += 1
-        print("Local Execution")
-        print_counts()
-        return False
+
+        
+        if battery_status['RemainingCapacity'] > local_energy_cost:
+            
+            return execute_local()
+
+        # If the battery is not sufficient offload the task to the remote server
+        else:
+            print("**Battery is not sufficient to execute the task locally!**")
+            result = execute_remote()
+            if result == False:
+                print("Execution Failed!")
+                exit(1)
+            else:
+                return result
     else:
-        print("Remote Execution")
-        try:
-            server = xmlrpc.client.ServerProxy(
-                Constants.getInstance().SERVER_URL)
-        except:
-            print("Error in connecting to the remote server!")
-            local_count += 1
-            print("Local Execution")
-            print_counts()
-            # self.conclusion()
-            flag = 1
-            return False
-        if(flag == 0):
-            remote_count += 1
-            csRemote = server.Matrix_Mul_Remote(obj)
-            try:
-                csResult = loads(csRemote, object_hook=as_python_object)
-            except:
-                print("Error in loading the object from the server!")
-                exit()
-                
-            print_counts()
-            return csResult
+        
+        result = execute_remote()
+        if result == False:
+            # Try executing the task locally
+            if battery_status['RemainingCapacity'] > local_energy_cost:
+                return execute_local()
+            
+            else:
+                print("Low Battery - Execution Failed!")
+                exit(1)
+        else:
+            return result
 

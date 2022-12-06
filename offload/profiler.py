@@ -6,7 +6,7 @@ import pstats
 from device_profiler import DeviceProfiler
 from network_profiler import NetworkProfiler
 from task_profiler import TaskProfiler
-
+from battery_tracker import BatteryTracker
 
 
 class Profiler:
@@ -18,6 +18,7 @@ class Profiler:
         self.task_profiler = TaskProfiler(self.task)
         self.device_profiler = DeviceProfiler()
         self.network_profiler = NetworkProfiler()
+        self.batteryTracker = BatteryTracker()
 
     def get_communication_cost(self):
         # Check Units Network cost for 1 byte
@@ -55,6 +56,19 @@ class Profiler:
 
         total_cost = remote_execution_cost + data_transporation_cost
         return total_cost
+
+    def get_local_energy_consumption(self):
+        # Energy Consumption = EPI * Instruction Count
+        instruction_count = self.task_profiler.get_instruction_count()
+        # Energy per Instruction (EPI) in User Equipment
+        EPI = self.batteryTracker.get_local_EPI()
+        
+        #Convert nano Joules to milli watt hours
+        local_energy_consumption = (instruction_count * EPI) / (3600 * 1000000)
+        return local_energy_consumption
+    
+    def get_battery_status(self):
+        return self.batteryTracker.get_battery_status()
 
 
 if __name__ == '__main__':
