@@ -58,6 +58,6 @@ if __name__ == '__main__':
     print("Listening on port 8000...")
     server.register_function(local_frequency, "local_frequency")
     server.register_function(local_CPI, "local_CPI")
-    server.register_function(Matrix_Mul_Remote, "Matrix_Mul_Remote")
+    server.register_function(Matrix_Mul_Remote, "Remote_Method")
     server.register_function(server_metrics, "server_metrics")
     server.serve_forever()
