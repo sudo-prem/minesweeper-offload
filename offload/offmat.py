@@ -31,6 +31,7 @@ def offmat(task, code_sync_obj, code_for_ic):
     #Returns server response object in case of success, False otherwise
     def execute_remote():
         global remote_count
+        remote_count+=1
         print("***Remote Execution***")
         try:
             server = xmlrpc.client.ServerProxy(
