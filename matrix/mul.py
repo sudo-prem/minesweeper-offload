@@ -1,8 +1,10 @@
+from offmat import offmat
 from create_mat import create_mat
 import time
 import sys
+import random
+import unittest
 sys.path.append('../offload')
-from offmat import offmat
 
 try:
     xrange
@@ -15,7 +17,9 @@ class MatrixMultiplication:
         create_mat(ndim)
         self.ndim = ndim
         self.filename = "matrix.out"
-        lines = open(self.filename).read().splitlines()
+        lines = []
+        with open(self.filename) as f:
+            lines = f.read().splitlines()
         self.A = []
         self.B = []
         self.matrix = self.A
@@ -81,8 +85,7 @@ if __name__ == "__main__":
     for dim in dimensions:
         matmul = MatrixMultiplication(int(dim))
         res = matmul.standard_matrix_product()
-        
+
         for line in res:
             print("\t".join(map(str, line)))
         print()
-
