@@ -1,5 +1,7 @@
 from code_sync import CodeSync
-from offload.offmat import offmat
+import sys
+sys.path.append('../offload')
+from offmat import offmat
 
 
 already_called_recursively = False
@@ -37,6 +39,8 @@ class NQueens:
                     numberOfParamsInSelf += 1
             else:
                 codeSyncDict[key] = val
+
+        codeSyncDict['functionName'] = 'solve'
 
         codeForIC = codeSyncDict
 
@@ -82,7 +86,7 @@ class NQueens:
 
 
 if __name__ == "__main__":
-    N = 4
+    N = int(input("Enter number of queens: "))
     nqueens = NQueens(N)
     nqueens.solve(N)
     nqueens.print_solution()

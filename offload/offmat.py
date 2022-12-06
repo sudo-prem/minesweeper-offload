@@ -17,7 +17,7 @@ def print_counts():
     print("Remote Count: ", remote_count)
     print()
 
-def offmat(task, code_sync_obj):
+def offmat(task, code_sync_obj, code_for_ic):
     global local_count, remote_count
 
     # returns False as the Offloading decision to the caller
@@ -37,6 +37,7 @@ def offmat(task, code_sync_obj):
                 Constants.getInstance().SERVER_URL)
                 
             csRemote = server.Matrix_Mul_Remote(obj)
+            # csRemote = server.NQueens_Remote(obj)
 
             try:
                 csResult = loads(csRemote, object_hook=as_python_object)
@@ -53,7 +54,7 @@ def offmat(task, code_sync_obj):
     # TODO: check units
     data_size = sys.getsizeof(obj) / 1024
 
-    profiler = Profiler(task=task, data_size=data_size)
+    profiler = Profiler(task=task, data_size=data_size, code_for_ic=code_for_ic)
 
     local_exec_cost = profiler.get_local_execution_cost()
     local_exec_cost = round(local_exec_cost, 3)

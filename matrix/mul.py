@@ -30,23 +30,32 @@ class MatrixMultiplication:
             print("\t".join(map(str, line)))
 
     def standard_matrix_product(self):
+        n = len(self.A)
         saved_args = locals()
         codeSyncDict = {}
+        numberOfParamsInSelf = 0
 
         for key, val in saved_args.items():
             if key == 'self':
                 for i in val.__dict__:
                     codeSyncDict[i] = val.__dict__[i]
+                    numberOfParamsInSelf += 1
             else:
                 codeSyncDict[key] = val
 
+        codeSyncDict['functionName'] = 'standard_matrix_product'
+
+        codeForIC = codeSyncDict
+
+        codeForIC['saved_args'] = saved_args
+        codeForIC['dict'] = numberOfParamsInSelf
+
         task = self.standard_matrix_product
 
-        offMatResult = offmat(task, codeSyncDict)
+        offMatResult = offmat(task, codeSyncDict, codeForIC)
         # offMatResult = False
         if offMatResult == False:
             start = time.time()
-            n = len(self.A)
             C = [[0 for i in xrange(n)] for j in xrange(n)]
             for i in xrange(n):
                 for j in xrange(n):

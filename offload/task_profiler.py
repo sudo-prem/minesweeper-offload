@@ -10,40 +10,69 @@ from object_encoder import *
 import dis
 
 class TaskProfiler:
-    def __init__(self, task):
+    def __init__(self, task, code_for_ic):
         self.task = task
         self.CPI = DeviceProfiler().get_local_CPI()
         self.cpu_frequency = DeviceProfiler().get_local_cpu_frequency()
         self.instruction_count = -1.0
+        self.code_for_ic = code_for_ic
 
     def get_estimated_time(self, task):
         time = pstats.Stats(task).total_tt
         return time
 
-    # def get_instruction_count_sc(self):
-    #     if self.instruction_count != -1.0:
-    #         return self.instruction_count
+    def get_ic(self, instructions):
+        i = 0
+        length = len(instructions)
+        ic = length
+        forIterDict = {}  # stores the offset of the FOR_ITER instruction and the ending offset
+        forIterIterator = {}  # stores the offset of the FOR_ITER instruction and the iterator
+        while (i < length):
+            if instructions[i].opname == 'FOR_ITER':
+                forIterDict[instructions[i].offset] = instructions[i].argval - 2
+                j = i - 1
+                while (instructions[j].opname != 'LOAD_ATTR' and instructions[j].opname != 'LOAD_CONST' and instructions[j].opname != 'LOAD_FAST' and instructions[j].opname != 'LOAD_DEREF'):
+                    j -= 1
+                if (instructions[j].opname == 'LOAD_ATTR' or instructions[j].opname == 'LOAD_FAST' or instructions[j].opname == 'LOAD_DEREF'):
+                    if (instructions[j].argval == '__dict__'):
+                        value = self.code_for_ic['dict']
+                    else:
+                        value = self.code_for_ic[instructions[j].argval]
+                    if (isinstance(value, int) or isinstance(value, float)):
+                        forIterIterator[instructions[i].offset] = value
+                    else:
+                        forIterIterator[instructions[i].offset] = len(value)
+                elif (instructions[j].opname == 'LOAD_CONST'):
+                    forIterIterator[instructions[i].offset] = instructions[j].argval
 
-    #     # Estimated time for task execution
-    #     time = get_estimated_time(self.task)
-    #     try:
-    #         self.instruction_count = (time * self.cpu_frequency + 1) // self.CPI
-    #         print("SC:" , self.instruction_count)
-    #     except ZeroDivisionError:
-    #         print("CPI has not been set properly!")
-    #         exit()
-    #     return self.instruction_count
+            i += 1
+
+        flag = 0
+        print(forIterDict)
+        print(forIterIterator)
+        for offset, endingoffset in forIterDict.items():
+            if (flag == 0):
+                ins_count = (endingoffset - offset) / 2
+                multiplier = forIterIterator[offset]
+                for key in forIterDict.keys():
+                    if (key > offset and key <= endingoffset):
+                        multiplier *= forIterIterator[key]
+                        flag += 1
+                ic += (ins_count * multiplier)
+            else:
+                flag -= 1
+        return ic
 
     def get_instruction_count(self):
-     
-        ic = dis.get_instructions(self.task)
-        count=0
-        for i in ic:
-            count+=1
-        self.instruction_count = count
+
+        instructions = dis.get_instructions(self.task)
+        instructions = list(instructions)
+        # print(self.code_for_ic)
+        ic = self.get_ic(instructions)
+        # print(dis.findlabels(self.task.__code__.co_code))
+        print("Instruction count = ", ic)
+        self.instruction_count = ic
         return self.instruction_count
-
-
 
 if __name__ == '__main__':
     def test():

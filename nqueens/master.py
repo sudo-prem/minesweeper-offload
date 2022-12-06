@@ -3,14 +3,21 @@ from json import loads, JSONEncoder, dumps
 import random
 import pickle
 from base64 import b64decode, b64encode
-from offload.device_profiler import *
 from code_sync import CodeSync
 from nqueens_remote import *
-from offload.object_encoder import ObjectEncoder, as_python_object
+
+import sys
+sys.path.append('../offload')
+from device_profiler import *
+from object_encoder import ObjectEncoder, as_python_object
 
 # Functions to register
 local_frequency = DeviceProfiler().get_local_cpu_frequency
 local_CPI = DeviceProfiler().get_local_CPI
+
+
+def server_metrics():
+    return local_frequency(), local_CPI()
 
 
 def NQueens_Remote(code_sync):
@@ -59,4 +66,5 @@ if __name__ == '__main__':
     server.register_function(local_frequency, "local_frequency")
     server.register_function(local_CPI, "local_CPI")
     server.register_function(NQueens_Remote, "NQueens_Remote")
+    server.register_function(server_metrics, "server_metrics")
     server.serve_forever()

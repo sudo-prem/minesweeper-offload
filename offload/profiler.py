@@ -11,11 +11,12 @@ from battery_tracker import BatteryTracker
 
 class Profiler:
 
-    def __init__(self, task, data_size):
+    def __init__(self, task, data_size, code_for_ic=None):
         self.task = task
         self.data_size = data_size
+        self.code_for_ic = code_for_ic
 
-        self.task_profiler = TaskProfiler(self.task)
+        self.task_profiler = TaskProfiler(self.task, self.code_for_ic)
         self.device_profiler = DeviceProfiler()
         self.network_profiler = NetworkProfiler()
         self.batteryTracker = BatteryTracker()

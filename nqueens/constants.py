@@ -6,6 +6,9 @@ class Constants:
     port = 8000
     SERVER_URL = remote_ip + ":" + str(port)
 
+    # EPI in nano Joules
+    EPI = 48
+
     @staticmethod
     def getInstance():
         """ Static access method. """

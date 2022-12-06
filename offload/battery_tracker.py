@@ -8,7 +8,6 @@ class BatteryTracker:
         
         self.EPI = Constants.getInstance().EPI
         self.wmiObj = wmi.WMI(moniker = "//./root/wmi")
-        self.taskProfiler = TaskProfiler(self.testFunction)
 
     
     def get_battery_status(self):
@@ -44,6 +43,7 @@ class BatteryTracker:
         energy = pyRAPL.get_energy_info()
         epi = energy / IC
         self.EPI = epi
+        taskProfiler = TaskProfiler(self.testFunction)
 
 if __name__ == "__main__":
     batteryTracker = BatteryTracker()
