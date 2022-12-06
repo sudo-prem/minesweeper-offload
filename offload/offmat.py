@@ -36,7 +36,7 @@ def offmat(task, code_sync_obj, code_for_ic):
             server = xmlrpc.client.ServerProxy(
                 Constants.getInstance().SERVER_URL)
                 
-            csRemote = server.Matrix_Mul_Remote(obj)
+            csRemote = server.Remote_Method(obj)
             # csRemote = server.NQueens_Remote(obj)
 
             try:

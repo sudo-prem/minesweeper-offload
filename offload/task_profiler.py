@@ -48,8 +48,8 @@ class TaskProfiler:
             i += 1
 
         flag = 0
-        print(forIterDict)
-        print(forIterIterator)
+        # print(forIterDict)
+        # print(forIterIterator)
         for offset, endingoffset in forIterDict.items():
             if (flag == 0):
                 ins_count = (endingoffset - offset) / 2
