@@ -3,7 +3,7 @@ from json import loads, JSONEncoder, dumps
 import random
 import pickle
 from base64 import b64decode, b64encode
-
+from mul_remote import MatrixMultiplication
 import sys
 sys.path.append('../offload')
 
@@ -29,7 +29,7 @@ def Matrix_Mul_Remote(code_sync):
         exit()
 
     print("*** Executed Remotely ***")
-    remoteClassVar = MatrixMultiplication(2)
+    remoteClassVar = MatrixMultiplication()
     keys = locals()['code_sync_remote'].keys()
     values = locals()['code_sync_remote'].values()
     for key, val in zip(keys, values):

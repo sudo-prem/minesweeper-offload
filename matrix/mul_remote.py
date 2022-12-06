@@ -8,19 +8,6 @@ except NameError:
 
 
 class MatrixMultiplication:
-    def __init__(self, ndim):
-        create_mat(ndim)
-        self.ndim = ndim
-        self.filename = "matrix.in"
-        lines = open(self.filename).read().splitlines()
-        self.A = []
-        self.B = []
-        self.matrix = self.A
-        for line in lines:
-            if line != "":
-                self.matrix.append([int(el) for el in line.split("\t")])
-            else:
-                self.matrix = self.B
 
     def print_matrix(self, mat):
         for line in mat:
@@ -34,7 +21,7 @@ class MatrixMultiplication:
             for j in xrange(n):
                 for k in xrange(n):
                     C[i][j] += self.A[i][k] * self.B[k][j]
-        print("Remote Time: %f" % (time.time() - start))
+        print("Remote Time: %f" % (time.time() - start), "sec")
         return C
 
 

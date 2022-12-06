@@ -53,7 +53,7 @@ class MatrixMultiplication:
                     for k in xrange(n):
                         C[i][j] += self.A[i][k] * self.B[k][j]
 
-            print("Local Time: %f" % (time.time() - start))
+            print("Local Time: %f" % (time.time() - start), "sec")
             print("**************************\n")
             return C
         else:
@@ -73,7 +73,7 @@ if __name__ == "__main__":
         matmul = MatrixMultiplication(int(dim))
         res = matmul.standard_matrix_product()
         
-        # for line in res:
-        #     print("\t".join(map(str, line)))
-        # print()
+        for line in res:
+            print("\t".join(map(str, line)))
+        print()
 
