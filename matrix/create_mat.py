@@ -13,7 +13,8 @@ def create_mat(n):
 
 
 def create_random_matrix(n):
-    max_val = 1000 
+    random.seed(1234)
+    max_val = 1000
     matrix = []
     for i in range(n):
         matrix.append([random.randint(0, max_val) for el in range(n)])
@@ -21,12 +22,12 @@ def create_random_matrix(n):
 
 
 def save_matrix(matrix_a, matrix_b, filename):
-    f = open(filename, "w")
-    for i, matrix in enumerate([matrix_a, matrix_b]):
-        if i != 0:
-            f.write("\n")
-        for line in matrix:
-            f.write("\t".join(map(str, line)) + "\n")
+    with open(filename, "w") as f:
+        for i, matrix in enumerate([matrix_a, matrix_b]):
+            if i != 0:
+                f.write("\n")
+            for line in matrix:
+                f.write("\t".join(map(str, line)) + "\n")
 
 
 # def get_parser():
