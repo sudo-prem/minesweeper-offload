@@ -1,5 +1,5 @@
 import psutil
-from object_encoder import *
+from offload.object_encoder import *
 import time
 from xmlrpc.client import ServerProxy
 from constants import *
@@ -22,21 +22,16 @@ class DeviceProfiler:
             print("Error connecting to the remote server!")
             exit()
 
-    # def get_remote_cpu_frequency(self):
-    #     self.connect_to_server()
-    #     cpu_frequency = self.server.local_frequency()
-    #     return cpu_frequency
-
-    # def get_remote_CPI(self):
-    #     self.connect_to_server()
-    #     CPI = self.server.local_CPI()
-    #     return CPI
-    def get_remote_metrics(self):
+    def get_remote_cpu_frequency(self):
         self.connect_to_server()
-        server_metrics = self.server.server_metrics()
-        self.cpu_frequency = server_metrics[0]
-        self.CPI = server_metrics[1]
-        return self.cpu_frequency, self.CPI
+        cpu_frequency = self.server.local_frequency()
+        return cpu_frequency
+
+    def get_remote_CPI(self):
+        self.connect_to_server()
+        CPI = self.server.local_CPI()
+        return CPI
+
     # Returns in hertz
     def get_local_cpu_frequency(self):
         # cpu_info = cpuinfo.get_cpu_info()

@@ -3,17 +3,16 @@ from json import loads, JSONEncoder, dumps
 import random
 import pickle
 from base64 import b64decode, b64encode
-from device_profiler import *
+from offload.device_profiler import *
 from code_sync import CodeSync
 from nqueens_remote import *
-from object_encoder import ObjectEncoder, as_python_object
+from offload.object_encoder import ObjectEncoder, as_python_object
 
 # Functions to register
 local_frequency = DeviceProfiler().get_local_cpu_frequency
 local_CPI = DeviceProfiler().get_local_CPI
 
-def server_metrics():
-    return local_frequency(), local_CPI()
+
 def NQueens_Remote(code_sync):
     try:
         code_sync_remote = loads(code_sync, object_hook=as_python_object)
@@ -22,16 +21,28 @@ def NQueens_Remote(code_sync):
         exit()
 
     print("*** Executed Remotely ***")
+    nqueens = NQueens(2)
+    keys = locals()['code_sync_remote'].keys()
+    values = locals()['code_sync_remote'].values()
+    for key, val in zip(keys, values):
+        setattr(nqueens, key, val)
 
+    result = nqueens.solve(getattr(nqueens, 'n'))
 
-    nqueens = NQueens(code_sync_remote.N)
-    nqueens.n = code_sync_remote.n
-    nqueens.board = code_sync_remote.board
-    result = nqueens.solve(code_sync_remote.n)
+    codeSyncDict = nqueens.__dict__
 
-    code_sync_Return = CodeSync(nqueens.n, nqueens.board, nqueens.N, result)
+    codeSyncDict['retVal'] = result
+    print(codeSyncDict)
+
+    # for key, val in saved_args.items():
+    #     if key == 'self':
+    #         for i in val.__dict__:
+    #             codeSyncDict[i] = val.__dict__[i]
+    #     else:
+    #         codeSyncDict[key] = val
+
     try:
-        res = dumps(code_sync_Return, cls=ObjectEncoder)
+        res = dumps(codeSyncDict, cls=ObjectEncoder)
         return res
     except:
         print("Error while encoding the object in the server")
@@ -48,5 +59,4 @@ if __name__ == '__main__':
     server.register_function(local_frequency, "local_frequency")
     server.register_function(local_CPI, "local_CPI")
     server.register_function(NQueens_Remote, "NQueens_Remote")
-    server.register_function(server_metrics, "server_metrics")
     server.serve_forever()
