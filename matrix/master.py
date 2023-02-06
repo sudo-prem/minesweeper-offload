@@ -19,6 +19,9 @@ local_CPI = DeviceProfiler().get_local_CPI
 def server_metrics():
     return local_frequency(), local_CPI()
 
+def GET():
+    print("RTT GET")
+    return "GET"
 
 def Matrix_Mul_Remote(code_sync):
 
@@ -60,4 +63,5 @@ if __name__ == '__main__':
     server.register_function(local_CPI, "local_CPI")
     server.register_function(Matrix_Mul_Remote, "Remote_Method")
     server.register_function(server_metrics, "server_metrics")
+    server.register_function(GET, "GET")
     server.serve_forever()

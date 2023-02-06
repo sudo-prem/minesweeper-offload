@@ -14,6 +14,9 @@ from object_encoder import ObjectEncoder, as_python_object
 local_frequency = DeviceProfiler().get_local_cpu_frequency
 local_CPI = DeviceProfiler().get_local_CPI
 
+def GET():
+    print("RTT GET")
+    return "GET"
 
 def server_metrics():
     return local_frequency(), local_CPI()
@@ -38,7 +41,7 @@ def NQueens_Remote(code_sync):
     codeSyncDict = nqueens.__dict__
 
     codeSyncDict['retVal'] = result
-    print(codeSyncDict)
+    # print(codeSyncDict)
 
     # for key, val in saved_args.items():
     #     if key == 'self':
@@ -66,4 +69,5 @@ if __name__ == '__main__':
     server.register_function(local_CPI, "local_CPI")
     server.register_function(NQueens_Remote, "Remote_Method")
     server.register_function(server_metrics, "server_metrics")
+    server.register_function(GET, "GET")
     server.serve_forever()

@@ -64,13 +64,16 @@ class TaskProfiler:
         return ic
 
     def get_instruction_count(self):
-
+        if(self.instruction_count != -1.0):
+            return self.instruction_count
         instructions = dis.get_instructions(self.task)
         instructions = list(instructions)
         # print(self.code_for_ic)
-        ic = self.get_ic(instructions)
+        ic = self.get_ic(instructions)  
+
+        ic = (ic// (len(instructions)))
         # print(dis.findlabels(self.task.__code__.co_code))
-        print("Instruction count = ", ic)
+        # print("Instruction count = ", ic)
         self.instruction_count = ic
         return self.instruction_count
 

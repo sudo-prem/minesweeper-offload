@@ -15,6 +15,7 @@ def print_counts():
     global local_count, remote_count
     print("Local Count: ", local_count)
     print("Remote Count: ", remote_count)
+    print("***********************************************")
     print()
 
 def offmat(task, code_sync_obj, code_for_ic):

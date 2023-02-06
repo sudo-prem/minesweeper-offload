@@ -28,6 +28,7 @@ class MatrixMultiplication:
         for line in mat:
             print("\t".join(map(str, line)))
     def standard_matrix_product(self):
+        start = time.time()
         n = len(self.A)
         saved_args = locals()
         codeSyncDict = {}
@@ -47,13 +48,13 @@ class MatrixMultiplication:
         offMatResult = offmat(task, codeSyncDict, codeForIC)
         # offMatResult = False
         if offMatResult == False:
-            start = time.time()
+            
             C = [[0 for i in xrange(n)] for j in xrange(n)]
             for i in xrange(n):
                 for j in xrange(n):
                     for k in xrange(n):
                         C[i][j] += self.A[i][k] * self.B[k][j]
-            print("Local Time: %f" % (time.time() - start), "sec")
+            print("Local Time: %f" % ((time.time() - start)*1000), "ms")
             print("**************************\n")
             return C
         else:
@@ -69,6 +70,6 @@ if __name__ == "__main__":
         matmul = MatrixMultiplication(int(dim))
         res = matmul.standard_matrix_product()
         
-        for line in res:
-            print("\t".join(map(str, line)))
-        print()
+        # for line in res:
+        #     print("\t".join(map(str, line)))
+        # print()

@@ -1,8 +1,8 @@
 class Constants:
     __instance = None
 
-    # remote_ip = 'http://192.168.1.5'
-    remote_ip = 'http://localhost'
+    remote_ip = 'http://192.168.1.11'
+    # remote_ip = 'http://localhost'
     port = 8000
     SERVER_URL = remote_ip + ":" + str(port)
 

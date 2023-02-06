@@ -2,7 +2,7 @@
 import sys
 sys.path.append('../offload')
 from offmat import offmat
-
+import time
 
 already_called_recursively = False
 
@@ -88,5 +88,8 @@ class NQueens:
 if __name__ == "__main__":
     N = int(input("Enter number of queens: "))
     nqueens = NQueens(N)
+    start = time.time()
     nqueens.solve(N)
-    nqueens.print_solution()
+    end = time.time()
+    print("Time taken: ", (end-start)*1000, "ms")
+    # nqueens.print_solution()

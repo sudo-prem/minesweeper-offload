@@ -21,7 +21,7 @@ class MatrixMultiplication:
             for j in xrange(n):
                 for k in xrange(n):
                     C[i][j] += self.A[i][k] * self.B[k][j]
-        print("Remote Time: %f" % (time.time() - start), "sec")
+        print("Remote Time: %f" % ((time.time() - start)*1000), "ms")
         return C
 
 
